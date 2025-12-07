@@ -69,10 +69,10 @@
       "branding": {
         "logoTop": "ХТО ХОЧЕ",
         "logoBottom": "СТАТИ",
-        "logoCenter": "МІЛЬЙОНЕРОМ"
+        "logoCenter": "ПОЛЛІОНЕРОМ"
       },
       "general": {
-        "currencySymbol": "₴",
+        "currencySymbol": "",
         "startGameBtn": "РОЗПОЧАТИ ГРУ",
         "tryAgainBtn": "СПРОБУВАТИ ЩЕ",
         "closeBtn": "ЗАКРИТИ",
@@ -128,13 +128,13 @@
         "pinPlaceholder": "Введіть PIN",
         "transferTitle": "ВИВЕДЕННЯ ВИГРАШУ",
         "balanceLabel": "Доступний баланс",
-        "addressLabel": "Адреса отримувача (ETH)",
+        "addressLabel": "Адреса отримувача (POL)",
         "sendBtn": "ПОЧАТИ ПЕРЕКАЗ",
         "processing": "Перевірка блокчейну...",
         "successTitle": "ПЕРЕКАЗ ЗАВЕРШЕНО",
         "successMsg": "Кошти було відправлено.",
         "errorTitle": "ПОМИЛКА ТРАНЗАКЦІЇ",
-        "winAmountText": "5 000"
+        "winAmountText": "800"
       },
       "hints": [
         {
@@ -176,34 +176,34 @@
     }
   },
   "blockchain": {
-    "networkName": "Sepolia Testnet",
-    "chainId": 11155111,
-    "rpcUrl": "https://rpc.sepolia.org",
+    "networkName": "Polygon",
+    "chainId": 137,
+    "rpcUrl": "https://polygon-rpc.com",
     "sender": {
       "encryptedKey": {
-        "ciphertext": "638915fd2ddfbfa88ae7c72b60b13bd477ebd8298ea604f626c8da05dd9c376c59de225626c8e3f1aeb42558b7e3791d4216a8cdaa9a3d4faa513bfc91740295343b166fa7d59ae12e6fbe1b6d542df038e1",
-        "iv": "d9531688c86d07df4c27d746",
-        "salt": "a678e13d218acc5aa4a9d3318c3e4cea"
+        "ciphertext": "14f0adfca4e79575caf7f117b36ba445fd374d6799543ad0fbb47121ee5cb697896e9039cd7fe7d1516c82ac6f298482f4c7bedca78cec34b80930509d6cdf35fab3cd52760d6c4da6a75e33c98ae145036e",
+        "iv": "1f91a5816895a7450489b919",
+        "salt": "bbf748a242a10252558a0f0bb65440be"
       },
       "gasLimitBuffer": 21000
     }
   },
   "levels": [
-    { "index": 1, "amount": 10, "isSafeHaven": false },
-    { "index": 2, "amount": 20, "isSafeHaven": false },
-    { "index": 3, "amount": 30, "isSafeHaven": false },
-    { "index": 4, "amount": 40, "isSafeHaven": false },
-    { "index": 5, "amount": 50, "isSafeHaven": false },
-    { "index": 6, "amount": 75, "isSafeHaven": false },
-    { "index": 7, "amount": 100, "isSafeHaven": false },
+    { "index": 1, "amount": 5, "isSafeHaven": false },
+    { "index": 2, "amount": 10, "isSafeHaven": false },
+    { "index": 3, "amount": 15, "isSafeHaven": false },
+    { "index": 4, "amount": 25, "isSafeHaven": false },
+    { "index": 5, "amount": 40, "isSafeHaven": false },
+    { "index": 6, "amount": 60, "isSafeHaven": false },
+    { "index": 7, "amount": 90, "isSafeHaven": false },
     { "index": 8, "amount": 125, "isSafeHaven": false },
-    { "index": 9, "amount": 150, "isSafeHaven": false },
+    { "index": 9, "amount": 160, "isSafeHaven": false },
     { "index": 10, "amount": 200, "isSafeHaven": false },
-    { "index": 11, "amount": 300, "isSafeHaven": false },
-    { "index": 12, "amount": 600, "isSafeHaven": false },
-    { "index": 13, "amount": 1250, "isSafeHaven": false },
-    { "index": 14, "amount": 2500, "isSafeHaven": false },
-    { "index": 15, "amount": 5000, "isSafeHaven": true }
+    { "index": 11, "amount": 250, "isSafeHaven": false },
+    { "index": 12, "amount": 300, "isSafeHaven": false },
+    { "index": 13, "amount": 350, "isSafeHaven": false },
+    { "index": 14, "amount": 400, "isSafeHaven": false },
+    { "index": 15, "amount": 800, "isSafeHaven": true }
   ],
   "questions": {
     "1": [

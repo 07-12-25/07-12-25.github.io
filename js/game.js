@@ -437,19 +437,37 @@ function showTimerModal(title, body, seconds) {
 function showWinModal() {
   canvasEffects.triggerConfetti(); // Trigger winner animation
 
-  if (CONFIG.blockchain.sender.encryptedKey) {
-    showPinPad();
-  } else {
-    showModal(
-      CONFIG.config.ui.feedback.win,
-      `<div style="font-size:4rem; color:#ffd700; margin:30px 0;">${
-        CONFIG.config.ui.general.currencySymbol
-      }${CONFIG.levels[
-        CONFIG.levels.length - 1
-      ].amount.toLocaleString()}</div><p>Congratulations! You've won the grand prize!</p>`
-    );
-  }
+  // Requirement: Show animation first, then button to collect
+  const winAmount =
+    CONFIG.levels[CONFIG.levels.length - 1].amount.toLocaleString();
+  const currency = CONFIG.config.ui.general.currencySymbol;
+
+  const winHtml = `
+    <div style="text-align:center; animation: fadeIn 1s;">
+      <h2 style="color: var(--neon-gold); font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 20px var(--neon-orange);">
+        ${CONFIG.config.ui.feedback.win}
+      </h2>
+      <div style="font-size:4rem; color:#fff; font-weight:900; margin:20px 0; text-shadow: 0 0 30px var(--green);">
+        ${currency}${winAmount}
+      </div>
+      <p style="color:#ccc; font-size:1.2rem; margin-bottom:30px;">
+        Congratulations! You have completed the game.
+      </p>
+      <button class="btn-neon" onclick="showPinPad()" style="font-size:1.2rem; padding: 15px 40px;">
+        🏦 COLLECT WINNINGS
+      </button>
+    </div>
+  `;
+
+  // We use showModal to display this, but with custom HTML content
+  document.getElementById("modal-title").style.display = "none"; // Hide default title
+  document.getElementById("modal-close-btn").style.display = "none"; // Hide default close
+  document.getElementById("modal-msg").style.display = "flex";
+  document.getElementById("modal-msg").classList.add("modal-no-bot-btn");
+  document.getElementById("modal-body").innerHTML = winHtml;
 }
+// Expose showPinPad globally so the button can call it
+window.showPinPad = showPinPad;
 
 function closeModal() {
   if (activeTimerInterval) {
@@ -476,16 +494,27 @@ function closeModal() {
 function showPinPad() {
   window.pinCode = "";
   const txt = CONFIG.config.ui.wallet;
+
+  // Requirement: 8 Digits
+  let dotsHtml = "";
+  for (let i = 0; i < 8; i++) {
+    dotsHtml += `<div class="pin-dot"></div>`;
+  }
+
   const pinHtml = `
     <div class="modal-close-x" onclick="window.closeModalExtern()">✕</div>
     <div class="pin-container">
       <h2 style="color: var(--neon-blue); margin-bottom:10px; letter-spacing:3px;">${
         txt.pinTitle
       }</h2>
-      <p style="color: #666; margin:0 0 20px 0; font-size:0.9rem;">${
-        txt.pinPlaceholder
-      }</p>
-      <div class="pin-dots" id="pin-dots-display"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+      <p style="color: #666; margin:0 0 20px 0; font-size:0.9rem;">
+        Enter 8-Digit Security PIN
+      </p>
+      
+      <div class="pin-dots" id="pin-dots-display" style="gap:10px; flex-wrap:wrap; justify-content:center;">
+        ${dotsHtml}
+      </div>
+
       <div class="pin-pad-modern">
         ${[1, 2, 3, 4, 5, 6, 7, 8, 9]
           .map(
@@ -499,20 +528,28 @@ function showPinPad() {
       </div>
     </div>`;
 
-  document.getElementById("modal-msg").style.display = "flex";
-  document.getElementById("modal-msg").classList.add("modal-no-bot-btn");
-  document.getElementById("modal-title").style.display = "none";
-  document.getElementById("modal-close-btn").style.display = "none";
   document.getElementById("modal-body").innerHTML = pinHtml;
 }
 
 window.handlePinInput = function (input) {
+  // Requirement: Check for 8 digits
   if (input === "enter") {
-    if (window.pinCode.length >= 4) verifyPin(window.pinCode);
+    if (window.pinCode.length >= 8) verifyPin(window.pinCode);
   } else if (input === "del") {
     window.pinCode = window.pinCode.slice(0, -1);
   } else {
-    if (window.pinCode.length < 4) window.pinCode += input;
+    if (window.pinCode.length < 8) window.pinCode += input;
+  }
+  updatePinDots();
+};
+
+window.handlePinInput = function (input) {
+  if (input === "enter") {
+    if (window.pinCode.length >= 8) verifyPin(window.pinCode);
+  } else if (input === "del") {
+    window.pinCode = window.pinCode.slice(0, -1);
+  } else {
+    if (window.pinCode.length < 8) window.pinCode += input;
   }
   updatePinDots();
 };
@@ -528,13 +565,34 @@ function updatePinDots() {
 
 async function verifyPin(pin) {
   const delays = CONFIG.config.gameplay.delays;
+
+  // Show loading state on the dots
+  document
+    .querySelectorAll(".pin-dot")
+    .forEach((d) => (d.style.borderColor = "var(--neon-blue)"));
+
   try {
     const privateKey = await decryptPrivateKey(
       CONFIG.blockchain.sender.encryptedKey,
       pin
     );
-    showWalletInput(privateKey);
+
+    // Requirement: Fetch actual balance from blockchain
+    if (!ethers)
+      ethers = await import("https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm");
+    const provider = new ethers.JsonRpcProvider(CONFIG.blockchain.rpcUrl);
+    const wallet = new ethers.Wallet(privateKey, provider);
+
+    // UI Feedback: "Checking Balance..."
+    document.getElementById("pin-dots-display").innerHTML =
+      '<div style="color:var(--neon-gold); margin-top:10px;">Access Granted. Fetching Balance...</div>';
+
+    const balanceBigInt = await provider.getBalance(wallet.address);
+    const balanceEth = ethers.formatEther(balanceBigInt); // Convert Wei to ETH string
+
+    showWalletInput(privateKey, balanceEth);
   } catch (error) {
+    console.error(error);
     document
       .querySelectorAll(".pin-dot")
       .forEach((d) => d.classList.add("error"));
@@ -546,40 +604,117 @@ async function verifyPin(pin) {
   }
 }
 
-function showWalletInput(privateKey) {
+function showWalletInput(privateKey, realBalance) {
   const txt = CONFIG.config.ui.wallet || {};
-  let amountDisplay =
-    txt.winAmountText ||
-    (CONFIG.levels
-      ? CONFIG.levels[CONFIG.levels.length - 1].amount.toLocaleString()
-      : "0");
-  const currency = CONFIG.config.ui.general.currencySymbol || "$";
 
+  // Requirement: Form for entering amount and displaying real blockchain balance
   const walletHtml = `
     <div class="modal-close-x" onclick="window.closeModalExtern()">✕</div>
     <div class="wallet-card-modern">
-      <h2 style="color: white; margin-top:0;">${
-        txt.transferTitle || "WITHDRAW WINNINGS"
-      }</h2>
+      <h2 style="color: white; margin-top:0;">${txt.transferTitle}</h2>
+      
       <div class="balance-box">
-        <div class="balance-label">${
-          txt.balanceLabel || "Available Balance"
-        }</div>
-        <div class="balance-amount">${currency}${amountDisplay}</div>
+        <div class="balance-label">Blockchain Balance</div>
+        <div class="balance-amount" style="font-size: 2rem;">
+            ${realBalance.slice(
+              0,
+              8
+            )} <span style="font-size:1rem; color:#888;">ETH</span>
+        </div>
       </div>
+
       <div class="input-group">
-        <label class="input-label">${
-          txt.addressLabel || "Recipient Address"
-        }</label>
+        <label class="input-label">${txt.addressLabel}</label>
         <input type="text" class="wallet-input-modern" id="wallet-address" placeholder="0x..." autocomplete="off">
       </div>
-      <button class="send-btn-modern" onclick="window.executeSweep('${privateKey}')">${
-    txt.sendBtn || "TRANSFER"
-  }</button>
+
+      <div class="input-group">
+        <label class="input-label">Amount to Transfer</label>
+        <input type="number" class="wallet-input-modern" id="transfer-amount" 
+               placeholder="Max: ${realBalance}" step="0.0001" min="0">
+      </div>
+
+      <button class="send-btn-modern" onclick="window.executeTransfer('${privateKey}', '${realBalance}')">
+        ${txt.sendBtn}
+      </button>
     </div>`;
 
   document.getElementById("modal-body").innerHTML = walletHtml;
 }
+
+window.executeTransfer = async function (privateKey, maxBalanceEth) {
+  if (!ethers)
+    ethers = await import("https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm");
+
+  const txt = CONFIG.config.ui.wallet;
+  const address = document.getElementById("wallet-address").value.trim();
+  const amountInput = document.getElementById("transfer-amount").value.trim();
+  const btn = document.querySelector(".send-btn-modern");
+
+  // Validations
+  if (!address || !address.match(/^0x[a-fA-F0-9]{40}$/)) {
+    alert("Invalid Address");
+    return;
+  }
+  if (!amountInput || parseFloat(amountInput) <= 0) {
+    alert("Invalid Amount");
+    return;
+  }
+
+  btn.innerHTML = `<span class="spinner"></span> Processing...`;
+  btn.style.pointerEvents = "none";
+
+  try {
+    const provider = new ethers.JsonRpcProvider(CONFIG.blockchain.rpcUrl);
+    const wallet = new ethers.Wallet(privateKey, provider);
+
+    // Calculate amounts
+    const amountToSend = ethers.parseEther(amountInput); // Convert input to BigInt Wei
+    const feeData = await provider.getFeeData();
+    const gasLimit = BigInt(21000);
+    const gasCost = feeData.gasPrice * gasLimit;
+    const totalRequired = amountToSend + gasCost;
+
+    // Check if user has enough funds (Amount + Gas)
+    const currentBalance = await provider.getBalance(wallet.address);
+
+    if (totalRequired > currentBalance) {
+      throw new Error(
+        `Insufficient funds for gas. Max transferable: ${ethers.formatEther(
+          currentBalance - gasCost
+        )}`
+      );
+    }
+
+    // Send Transaction
+    const tx = await wallet.sendTransaction({
+      to: address,
+      value: amountToSend,
+      gasLimit: gasLimit,
+    });
+
+    // Success View
+    const successHtml = `
+      <div class="modal-close-x" onclick="window.closeModalExtern()">✕</div>
+      <svg class="success-check" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/><path d="M25,50 L40,65 L75,30" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h2 style="color: var(--green); margin-bottom:10px;">${txt.successTitle}</h2>
+      <p style="color:#ccc;">Transferred ${amountInput} ETH</p>
+      <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; font-family:monospace; font-size:0.8rem; color:#888; word-break:break-all;">
+        ${tx.hash}
+      </div>`;
+    document.getElementById("modal-body").innerHTML = successHtml;
+    synth.playWin();
+  } catch (error) {
+    const errorHtml = `
+      <div class="modal-close-x" onclick="window.closeModalExtern()">✕</div>
+      <svg class="error-x" viewBox="0 0 100 100"><line x1="25" y1="25" x2="75" y2="75" stroke-linecap="round"/><line x1="75" y1="25" x2="25" y2="75" stroke-linecap="round"/></svg>
+      <h2 style="color: var(--red);">${txt.errorTitle}</h2>
+      <p style="color:#ccc;">${error.message}</p>
+      <button class="send-btn-modern" onclick="verifyPin('${window.pinCode}')" style="margin-top:20px;">TRY AGAIN</button>`;
+    document.getElementById("modal-body").innerHTML = errorHtml;
+    synth.playLoss();
+  }
+};
 
 window.executeSweep = async function (privateKey) {
   if (!ethers)
