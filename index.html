@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Who Wants to Be a Millionaire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="start-overlay">
+      <div class="logo-container" id="logo-wrapper">
+        <svg width="0" height="0" style="position: absolute">
+          <defs>
+            <linearGradient
+              id="purple-gradient-ref"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" style="stop-color: #6a1b9a; stop-opacity: 1" />
+              <stop offset="50%" style="stop-color: #31084a; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #6a1b9a; stop-opacity: 1"
+              />
+            </linearGradient>
+            <linearGradient
+              id="gold-gradient-ref"
+              x1="0%"
+              y1="0%"
+              x2="0%"
+              y2="100%"
+            >
+              <stop offset="0%" style="stop-color: #fff59d; stop-opacity: 1" />
+              <stop offset="50%" style="stop-color: #fbc02d; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #fff59d; stop-opacity: 1"
+              />
+            </linearGradient>
+            <path id="curve-top-ref" d="M 50,250 A 195,195 0 0,1 450,250" />
+            <path id="curve-bottom-ref" d="M 50,250 A 195,195 0 0,0 450,250" />
+          </defs>
+        </svg>
+
+        <div class="logo-layer layer-bg" id="layer-bg">
+          <svg viewBox="0 0 500 500">
+            <circle cx="250" cy="250" r="165" fill="rgba(0, 0, 0, 0.8)" />
+          </svg>
+        </div>
+        <div class="logo-layer layer-ring-main" id="layer-ring-main">
+          <svg viewBox="0 0 500 500">
+            <circle
+              cx="250"
+              cy="250"
+              r="195"
+              stroke="url(#purple-gradient-ref)"
+              stroke-width="60"
+              fill="none"
+            />
+          </svg>
+        </div>
+        <div class="logo-layer layer-ring-outer" id="layer-ring-outer">
+          <svg viewBox="0 0 500 500">
+            <circle
+              cx="250"
+              cy="250"
+              r="224"
+              fill="none"
+              stroke="url(#gold-gradient-ref)"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4))"
+            />
+          </svg>
+        </div>
+        <div class="logo-layer layer-ring-inner" id="layer-ring-inner">
+          <svg viewBox="0 0 500 500">
+            <circle
+              cx="250"
+              cy="250"
+              r="166"
+              fill="none"
+              stroke="url(#gold-gradient-ref)"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4))"
+            />
+          </svg>
+        </div>
+        <div class="logo-layer layer-text-top" id="layer-text-top">
+          <svg viewBox="0 0 500 500">
+            <text
+              class="text-curve"
+              dy="17"
+              style="
+                letter-spacing: 4px;
+                fill: #fff;
+                font-size: 38px;
+                font-weight: 700;
+                text-transform: uppercase;
+                text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+              "
+            >
+              <textPath
+                href="#curve-top-ref"
+                startOffset="50%"
+                text-anchor="middle"
+                id="logo-text-top"
+              >
+                WHO WANTS
+              </textPath>
+            </text>
+          </svg>
+        </div>
+        <div class="logo-layer layer-text-bot" id="layer-text-bot">
+          <svg viewBox="0 0 500 500">
+            <text
+              class="text-curve"
+              dy="7"
+              style="
+                letter-spacing: 6px;
+                fill: #fff;
+                font-size: 38px;
+                font-weight: 700;
+                text-transform: uppercase;
+                text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+              "
+            >
+              <textPath
+                href="#curve-bottom-ref"
+                startOffset="50%"
+                text-anchor="middle"
+                id="logo-text-bottom"
+              >
+                TO BE A
+              </textPath>
+            </text>
+          </svg>
+        </div>
+        <div class="logo-layer layer-text-mid" id="layer-text-mid">
+          <svg viewBox="0 0 500 500">
+            <text
+              x="50%"
+              y="50%"
+              dy="0.35em"
+              style="
+                fill: #fff;
+                font-size: 80px;
+                font-weight: 900;
+                text-transform: uppercase;
+                text-anchor: middle;
+                text-shadow: 3px 3px 0 #000;
+                filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.9));
+              "
+              id="logo-text-center"
+            >
+              MILLIONAIRE
+            </text>
+          </svg>
+        </div>
+      </div>
+      <div
+        style="
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <button class="btn-neon" id="start-btn">
+          <!-- Text Injected via JS -->
+        </button>
+      </div>
+    </div>
+
+    <div id="modal-msg" class="modal-overlay">
+      <div class="modal-content">
+        <h2 class="modal-title" id="modal-title">Title</h2>
+        <div class="modal-body" id="modal-body">Body</div>
+        <button class="btn-neon" id="modal-close-btn">Close</button>
+      </div>
+    </div>
+
+    <div id="game-layout">
+      <div id="stage-area">
+        <div class="neon-box question-box" id="question-box">
+          <div class="q-text" id="question-text"></div>
+        </div>
+        <div class="answers-grid">
+          <div class="neon-box answer-box" id="ans-0" data-index="0">
+            <span class="ans-letter">A:</span
+            ><span class="ans-text" id="text-0">...</span>
+          </div>
+          <div class="neon-box answer-box" id="ans-1" data-index="1">
+            <span class="ans-letter">B:</span
+            ><span class="ans-text" id="text-1">...</span>
+          </div>
+          <div class="neon-box answer-box" id="ans-2" data-index="2">
+            <span class="ans-letter">C:</span
+            ><span class="ans-text" id="text-2">...</span>
+          </div>
+          <div class="neon-box answer-box" id="ans-3" data-index="3">
+            <span class="ans-letter">D:</span
+            ><span class="ans-text" id="text-3">...</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sidebar">
+        <div class="mobile-score" id="mobile-score-display">$0</div>
+        <div class="lifelines-group" id="lifelines-group"></div>
+        <div class="ladder-container" id="ladder-container"></div>
+      </div>
+    </div>
+
+    <div id="admin-toggle">🔧</div>
+
+    <div id="agent-help-container">
+      <div id="agent-help-tooltip-btn" class="ai-tooltip">
+        <!-- Text Injected via JS -->
+      </div>
+      <div id="agent-help-btn">?</div>
+    </div>
+
+    <div id="agent-modal" class="agent-overlay">
+      <div class="agent-content">
+        <button id="agent-close-btn" style="color: white">&times;</button>
+        <h1
+          style="
+            color: var(--neon-gold);
+            text-align: center;
+            border-bottom: 2px solid var(--neon-blue);
+            padding-bottom: 20px;
+            font-size: 2rem;
+          "
+        >
+          <span id="agent-title"><!-- Text Injected via JS --></span>
+        </h1>
+
+        <div id="agent-dynamic-sections">
+          <!-- Sections Injected via JS -->
+        </div>
+
+        <div
+          class="agent-section"
+          style="border: none; text-align: center; margin-top: 30px"
+        >
+          <button
+            class="btn-neon"
+            onclick="document.getElementById('agent-modal').classList.remove('active')"
+            style="padding: 10px 30px; font-size: 1rem"
+            id="agent-close-text"
+          >
+            <!-- Text Injected via JS -->
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="admin-tool">
+      <div class="admin-header">
+        <h3 id="admin-console-title">Admin Console</h3>
+        <button
+          id="admin-close-x"
+          style="
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.5rem;
+            cursor: pointer;
+          "
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchTab('gen')">
+          Generator
+        </button>
+        <button class="admin-tab-btn" onclick="switchTab('sim')">
+          Simulation
+        </button>
+      </div>
+
+      <div id="tab-gen" class="admin-panel active">
+        <!-- Section 1: Create Random (Existing) -->
+        <h4
+          style="
+            color: var(--neon-blue);
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            margin-top: 0;
+          "
+        >
+          Option A: Random Wallet
+        </h4>
+        <button
+          class="btn-neon"
+          id="btn-generate-wallet"
+          style="
+            width: 100%;
+            padding: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+          "
+        >
+          🎲 Generate Random Wallet
+        </button>
+
+        <div class="wallet-card" id="wallet-card-display" style="display: none">
+          <label class="wallet-label">Public Address</label>
+          <div class="wallet-value-group">
+            <input
+              type="text"
+              readonly
+              class="wallet-value"
+              id="gen-address"
+              value="..."
+            />
+            <button class="copy-btn" onclick="copyField('gen-address')">
+              📋
+            </button>
+          </div>
+          <label class="wallet-label">Private Key</label>
+          <div class="wallet-value-group">
+            <input
+              type="text"
+              readonly
+              class="wallet-value blur-text"
+              id="gen-pk"
+              value="..."
+            />
+            <button class="copy-btn" onclick="copyField('gen-pk')">🔑</button>
+          </div>
+          <!-- THIS WAS MISSING AND CAUSED THE CRASH -->
+          <div style="text-align: center; margin-top: 10px">
+            <button
+              class="btn-neon"
+              id="btn-use-generated"
+              style="
+                padding: 8px 20px;
+                font-size: 0.8rem;
+                border-color: var(--green);
+                color: var(--green);
+              "
+            >
+              ⬇️ Use For Simulation
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2: Encrypt Custom (New) -->
+        <h4
+          style="
+            color: var(--neon-orange);
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            margin-top: 20px;
+          "
+        >
+          Option B: Encrypt My Key
+        </h4>
+
+        <input
+          type="text"
+          id="custom-pk-input"
+          placeholder="Paste Private Key (0x...)"
+          style="margin-bottom: 5px"
+        />
+        <input
+          type="text"
+          id="custom-pin-input"
+          placeholder="Enter Desired PIN (e.g. 1234)"
+        />
+
+        <button
+          class="btn-neon"
+          id="btn-encrypt-json"
+          style="
+            width: 100%;
+            padding: 10px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            border-color: var(--green);
+            color: var(--green);
+          "
+        >
+          🔒 Encrypt & Get JSON
+        </button>
+
+        <label class="wallet-label" style="margin-top: 15px"
+          >Result JSON (Copy to config file):</label
+        >
+        <textarea
+          id="json-output"
+          rows="6"
+          readonly
+          style="
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #444;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 0.8rem;
+            border-radius: 6px;
+          "
+        ></textarea>
+        <button
+          class="btn-neon"
+          onclick="copyField('json-output')"
+          style="padding: 5px 20px; font-size: 0.8rem; margin-top: 5px"
+        >
+          Copy JSON
+        </button>
+      </div>
+
+      <div id="tab-sim" class="admin-panel">
+        <input type="text" id="admin-pk" placeholder="Private Key (0x...)" />
+        <input type="text" id="admin-pin" placeholder="Set a PIN (e.g. 1234)" />
+        <div style="display: flex; gap: 10px; margin-top: 15px">
+          <button
+            class="btn-neon"
+            id="admin-test-win-btn"
+            style="
+              flex: 1;
+              padding: 10px;
+              font-size: 1rem;
+              border-color: var(--neon-gold);
+              color: var(--neon-gold);
+            "
+          >
+            🏆 TEST WIN FLOW
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/game.js"></script>
+  </body>
+</html>

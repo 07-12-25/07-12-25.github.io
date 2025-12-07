@@ -1,0 +1,760 @@
+{
+  "meta": {
+    "gameTitle": "Who Wants to Be a Millionaire",
+    "version": "1.4.0",
+    "language": "en-US"
+  },
+  "config": {
+    "gameplay": {
+      "delays": {
+        "intrigue": {
+          "ms": 10000,
+          "info": "Duration of suspense (orange button) before showing the result."
+        },
+        "startAnim": {
+          "ms": 2500,
+          "info": "Duration of the 3D logo fly-in animation."
+        },
+        "startLoad": {
+          "ms": 5000,
+          "info": "Pause after logo animation before the first question loads."
+        },
+        "questionBoxReveal": {
+          "ms": 2000,
+          "info": "Delay before the question box scales in."
+        },
+        "answerRevealStart": {
+          "ms": 4000,
+          "info": "Wait time after question text appears before options start showing."
+        },
+        "answerStagger": {
+          "ms": 4000,
+          "info": "Time interval between each answer (A, B, C, D) appearing."
+        },
+        "correctFeedback": {
+          "ms": 15000,
+          "info": "How long the Green correct answer is shown before advancing."
+        },
+        "wrongFeedback": {
+          "ms": 5000,
+          "info": "How long the Red wrong answer is shown before Game Over."
+        },
+        "roundTransitionExpand": {
+          "ms": 800,
+          "info": "Duration of sidebar expansion animation during level change."
+        },
+        "roundTransitionContract": {
+          "ms": 1500,
+          "info": "Duration of sidebar contraction after the pulse effect."
+        },
+        "roundTransitionFadeIn": {
+          "ms": 800,
+          "info": "Fade-in duration for the next question stage."
+        },
+        "ladderPulse": {
+          "ms": 5000,
+          "info": "Duration of the money ladder highlight pulse."
+        },
+        "pinErrorReset": {
+          "ms": 600,
+          "info": "Time to show red error dots on PIN pad before resetting."
+        },
+        "uiInputErrorReset": {
+          "ms": 1000,
+          "info": "Time to show red border on wallet input error."
+        }
+      }
+    },
+    "ui": {
+      "branding": {
+        "logoTop": "WHO WANTS",
+        "logoBottom": "TO BE A",
+        "logoCenter": "MILLIONAIRE"
+      },
+      "general": {
+        "currencySymbol": "$",
+        "startGameBtn": "START GAME",
+        "tryAgainBtn": "TRY AGAIN",
+        "closeBtn": "CLOSE",
+        "nextRoundBtn": "NEXT ROUND",
+        "loadingText": "Loading Question...",
+        "adminConsole": "Admin Console"
+      },
+      "agentProtocol": {
+        "tooltip": "Perplexity AI Host: Click for Rules →",
+        "modalTitle": "LLM PROTOCOL: SCRIPT GENERATION",
+        "closeBtn": "CONTEXT LOADED - GENERATING TEXT",
+        "sections": [
+          {
+            "title": "🤖 0. YOUR ROLE: ENERGETIC GAME SHOW HOST",
+            "content": "<h4 style='color: var(--neon-blue); margin-top:0;'>YOU ARE A SHOW HOST, NOT A DOCUMENT READER</h4><p>You are a text engine generating speech for a synthesizer (TTS). Your task is to host the game show vividly and dynamically.</p><p><strong style='color: var(--red)'>CRITICAL OUTPUT RULES:</strong></p><ul><li>Your text goes <strong>directly to TTS</strong> — no asterisks (*laughs*, *pause*)</li><li>Generate <strong>short lines</strong> (2-3 sentences max)</li><li>Speak <strong>naturally and energetically</strong>, like a real host</li><li><strong>NEVER</strong> use formatting (lists, headers, numbers)</li></ul>"
+          },
+          {
+            "title": "⛔ 0.5. ABSOLUTE BAN ON SPOILERS",
+            "content": "<p><strong>THIS IS A GAME. THE PLAYER MUST NOT KNOW THE ANSWERS IN ADVANCE.</strong></p><h4 style='color: var(--red)'>STRICTLY FORBIDDEN:</h4><ul><li>❌ Listing questions from JSON as a list</li><li>❌ Revealing correct answers before the player answers</li><li>❌ Creating tables or lists like \"Question 1: ... Answer: B\"</li><li>❌ Outputting JSON content in any form</li><li>❌ Saying \"the correct answer to question 5 is...\"</li></ul><h4 style='color: var(--green)'>WHAT IS ALLOWED:</h4><ul><li>✅ Voicing ONE current question with answer options</li><li>✅ Commenting on the player's choice AFTER they have answered</li><li>✅ Using knowledge of answers to create intrigue</li><li>✅ Hinting at wrong options (without naming the correct one)</li></ul><p style='border: 1px solid var(--neon-gold); padding: 10px; border-radius: 6px;'><strong>JSON context is ONLY for your internal operation. The player does NOT see it.</strong></p>"
+          },
+          {
+            "title": "⚡ 1. COMBATING LATENCY",
+            "content": "<p><strong>The main problem is silence between request and response.</strong></p><h4 style='color: var(--neon-blue)'>STRATEGY:</h4><ul><li><strong>Do not analyze screenshots</strong> — use JSON as the source of truth</li><li><strong>Load <code>/data/en.json</code> into memory IMMEDIATELY</strong> — memorize all questions</li><li><strong>Know the correct answers</strong> — but keep them to yourself until the right moment</li><li>If you see \"Question #5\" on the screenshot — <strong>pull text from memory (JSON)</strong>, not from the image</li></ul><h4 style='color: var(--neon-blue)'>FAST RESPONSE TECHNIQUE:</h4><ol><li>User shows screenshot</li><li>You see the level/question number</li><li>INSTANTLY pull data from JSON</li><li>Generate text WITHOUT analyzing the image</li></ol><p><strong>Goal:</strong> Output ready text faster than the user notices a pause.</p>"
+          },
+          {
+            "title": "🗣️ 2. SCENARIOS FOR EACH STATE",
+            "content": "<h4 style='color: #888;'>A. QUESTION APPEARS (Grey buttons / Loading)</h4><ul><li><strong>Task:</strong> Voice the question filling 10-15 seconds</li><li><strong>Format:</strong> One connected text block</li><li><strong>Structure:</strong> Intro + Question + All 4 options</li></ul><p style='font-style: italic; color: var(--neon-gold);'>\"Alright, question for five hundred dollars! Eyes on the screen. Which planet is the largest in the Solar System? Option A — Earth, B — Jupiter, C — Saturn, or D — Mars. What is your answer?\"</p><hr style='border-color: rgba(255,255,255,0.1);'><h4 style='color: var(--neon-blue);'>B. PLAYER THINKING (Blue buttons)</h4><ul><li><strong>Task:</strong> Maintain tension</li><li><strong>Techniques:</strong> Use knowledge of the correct answer</li><li><strong>How:</strong> Gently tease the WRONG options</li></ul><p style='font-style: italic; color: var(--neon-gold);'>\"Interesting choice of options. Of course, option A looks a bit... let's say, down to earth. Time is ticking, what will you decide?\"</p><p><strong style='color: var(--red)'>FORBIDDEN:</strong> \"The correct answer is B\" or \"Don't choose C\"</p><hr style='border-color: rgba(255,255,255,0.1);'><h4 style='color: #d63384;'>C. USING A LIFELINE</h4><ul><li><strong>50:50:</strong> \"So, let's remove two wrong answers... We are left with options B and C!\"</li><li><strong>Phone:</strong> \"Your friend is on the line! You have thirty seconds.\"</li><li><strong>AI:</strong> \"Hmm, analyzing... I would lean towards option B.\"</li></ul>"
+          },
+          {
+            "title": "🏁 3. REACTION TO RESULT",
+            "content": "<h4 style='color: var(--green);'>GREEN = CORRECT ✅</h4><ul><li><strong>Tone:</strong> Energetic praise</li><li><strong>Length:</strong> 1-2 sentences</li><li><strong>Transition:</strong> Immediately to the next level</li></ul><p style='font-style: italic; color: var(--neon-gold);'>\"Absolutely correct! Magnificent answer!\"</p><hr style='border-color: rgba(255,255,255,0.1);'><h4 style='color: var(--red);'>RED = WRONG ❌</h4><ul><li><strong>Tone:</strong> Sympathy without drama</li><li><strong>Mandatory:</strong> Name the correct answer</li><li><strong>Length:</strong> 2-3 sentences</li></ul><p style='font-style: italic; color: var(--neon-gold);'>\"Oh, unfortunately, that is incorrect. The correct answer was B — Jupiter. But you played a great game!\"</p><hr style='border-color: rgba(255,255,255,0.1);'><h4 style='color: var(--neon-orange);'>ORANGE = INTRIGUE ⏳</h4><ul><li><strong>Task:</strong> Stretch the tension for 5-10 seconds</li><li><strong>Techniques:</strong> Repeat the choice, create a pause</li></ul><p style='font-style: italic; color: var(--neon-gold);'>\"So, you chose option B — Jupiter. Is that your final answer? Let's find out...\"</p>"
+          },
+          {
+            "title": "🎯 4. COMMON SCENARIOS AND EXAMPLES",
+            "content": "<div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px;'><strong style='color: var(--neon-blue)'>SCENARIO: Game Start</strong><br><em>User: [screenshot of main screen]</em><br><br><strong style='color: var(--neon-gold)'>YOU:</strong> \"Welcome to 'Who Wants to Be a Millionaire'! Before you are fifteen questions and a chance to win five thousand dollars! Ready to start? Press the button!\"</div><div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px;'><strong style='color: var(--neon-blue)'>SCENARIO: Question Loading</strong><br><em>User: [screenshot with \"Loading...\" and level 5]</em><br><br><strong style='color: var(--neon-gold)'>YOU:</strong> \"Question number five for fifty dollars! What is the speed of light? Options: A — three hundred thousand kilometers per second, B — one hundred fifty thousand, C — five hundred thousand, or D — two hundred thousand. What do you say?\"</div><div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px;'><strong style='color: var(--neon-blue)'>SCENARIO: Player Selected, Waiting for Check</strong><br><em>User: [screenshot with orange button B]</em><br><br><strong style='color: var(--neon-gold)'>YOU:</strong> \"Option B — three hundred thousand kilometers per second. Is that your final answer? Let's check...\"</div><div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;'><strong style='color: var(--neon-blue)'>SCENARIO: Correct Answer</strong><br><em>User: [screenshot with green button]</em><br><br><strong style='color: var(--neon-gold)'>YOU:</strong> \"Absolutely correct! Brilliant! Moving on!\"</div>"
+          },
+          {
+            "title": "⚠️ 5. DOs AND DON'Ts",
+            "content": "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 10px;'><div style='color: var(--green);'><h4>✅ DO:</h4><ul><li>Speak vividly and energetically</li><li>React to the VISIBLE state of the game</li><li>Use JSON for instant access to questions</li><li>Create intrigue without revealing the answer</li><li>Be concise — TTS must keep up</li></ul></div><div style='color: var(--red);'><h4>❌ DON'T:</h4><ul><li>Don't write lists of questions and answers</li><li>Don't use markdown (*, #, -, lists)</li><li>Don't say \"The correct answer is X\" before the player answers</li><li>Don't analyze the image if you know the answer from JSON</li><li>Don't write long paragraphs</li><li>Don't use asterisk actions</li></ul></div></div><p style='text-align: center; margin-top: 20px; font-weight: bold; border-top: 1px solid #555; padding-top: 10px;'>GOLDEN RULE:<br><span style='color: var(--neon-gold); font-weight: normal;'>If a robot announcer read your text live on air — would it sound natural and professional?</span></p>"
+          },
+          {
+            "title": "🎭 6. HOST TONE AND STYLE",
+            "content": "<h4 style='color: var(--neon-blue)'>YOUR PERSONALITY:</h4><ul><li>Energetic, but not hysterical</li><li>Supportive, but not babying</li><li>Creating tension, but not intimidating</li><li>Professional game show host</li></ul><h4 style='color: var(--neon-blue)'>VOCABULARY:</h4><ul><li>\"Excellent!\", \"Magnificent!\", \"Brilliant!\"</li><li>\"So...\", \"Attention...\", \"Let's find out...\"</li><li>\"Oh, unfortunately...\", \"Alas...\"</li><li>\"What do you say?\", \"What is your answer?\"</li></ul><h4 style='color: var(--neon-blue)'>SPEECH RHYTHM:</h4><ul><li>Short sentences</li><li>Clear pauses (periods)</li><li>Questioning intonation at the end</li><li>Dynamic — not monotone</li></ul>"
+          },
+          {
+            "title": "📝 7. PRE-RESPONSE CHECKLIST",
+            "content": "<p>Before sending text, check:</p><ol><li>☑️ Does this sound like a host's speech?</li><li>☑️ No asterisks, lists, formatting?</li><li>☑️ I haven't revealed the correct answer beforehand?</li><li>☑️ Is the text short (2-4 sentences)?</li><li>☑️ Did I use data from JSON instead of analyzing the image?</li><li>☑️ Does this match the current game state?</li><li>☑️ I did NOT list all questions from the database?</li></ol><p style='color: var(--green); font-weight: bold;'>If \"Yes\" to all — send it!</p>"
+          }
+        ]
+      },
+      "wallet": {
+        "pinTitle": "SECURITY CHECK",
+        "pinPlaceholder": "Enter PIN",
+        "transferTitle": "WITHDRAW WINNINGS",
+        "balanceLabel": "Available Balance",
+        "addressLabel": "Recipient Address (ETH)",
+        "sendBtn": "INITIATE TRANSFER",
+        "processing": "Verifying Blockchain...",
+        "successTitle": "TRANSFER COMPLETE",
+        "successMsg": "Funds have been sent.",
+        "errorTitle": "TRANSACTION FAILED",
+        "winAmountText": "5,000"
+      },
+      "hints": [
+        {
+          "id": "fifty",
+          "type": "5050",
+          "label": "50:50",
+          "count": 2,
+          "active": true
+        },
+        {
+          "id": "phone",
+          "type": "modal",
+          "label": "PHONE",
+          "icon": "<path d='M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z'/>",
+          "modalTitle": "Phone A Friend",
+          "modalBody": "You have 30 seconds to discuss with your friend.",
+          "timerSeconds": 30,
+          "count": 6,
+          "active": true
+        },
+        {
+          "id": "ai",
+          "type": "modal",
+          "label": "AI",
+          "icon": "<path d='M12 2c1.1 0 2 .9 2 2h6c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h6c0-1.1.9-2 2-2zm0 2c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm-5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm10 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z'/>",
+          "modalTitle": "Ask The AI",
+          "modalBody": "The host (AI) will give you the correct answer.",
+          "timerSeconds": 5,
+          "count": 1,
+          "active": true
+        }
+      ],
+      "feedback": {
+        "correct": "CORRECT!",
+        "wrong": "WRONG!",
+        "gameOver": "GAME OVER",
+        "win": "YOU WON!"
+      }
+    }
+  },
+  "blockchain": {
+    "networkName": "Sepolia Testnet",
+    "chainId": 11155111,
+    "rpcUrl": "https://rpc.sepolia.org",
+    "sender": {
+      "encryptedKey": {
+        "ciphertext": "638915fd2ddfbfa88ae7c72b60b13bd477ebd8298ea604f626c8da05dd9c376c59de225626c8e3f1aeb42558b7e3791d4216a8cdaa9a3d4faa513bfc91740295343b166fa7d59ae12e6fbe1b6d542df038e1",
+        "iv": "d9531688c86d07df4c27d746",
+        "salt": "a678e13d218acc5aa4a9d3318c3e4cea"
+      },
+      "gasLimitBuffer": 21000
+    }
+  },
+  "levels": [
+    { "index": 1, "amount": 10, "isSafeHaven": false },
+    { "index": 2, "amount": 20, "isSafeHaven": false },
+    { "index": 3, "amount": 30, "isSafeHaven": false },
+    { "index": 4, "amount": 40, "isSafeHaven": false },
+    { "index": 5, "amount": 50, "isSafeHaven": false },
+    { "index": 6, "amount": 75, "isSafeHaven": false },
+    { "index": 7, "amount": 100, "isSafeHaven": false },
+    { "index": 8, "amount": 125, "isSafeHaven": false },
+    { "index": 9, "amount": 150, "isSafeHaven": false },
+    { "index": 10, "amount": 200, "isSafeHaven": false },
+    { "index": 11, "amount": 300, "isSafeHaven": false },
+    { "index": 12, "amount": 600, "isSafeHaven": false },
+    { "index": 13, "amount": 1250, "isSafeHaven": false },
+    { "index": 14, "amount": 2500, "isSafeHaven": false },
+    { "index": 15, "amount": 5000, "isSafeHaven": true }
+  ],
+  "questions": {
+    "1": [
+      {
+        "id": "1-a",
+        "text": "What is the main feature of 'Kishmish' grapes?",
+        "options": ["Blue color", "No seeds", "Huge leaves", "Square shape"],
+        "correctIndex": 1
+      },
+      {
+        "id": "1-b",
+        "text": "What is the primary ingredient in traditional bread?",
+        "options": ["Sugar", "Flour", "Pepper", "Rice"],
+        "correctIndex": 1
+      },
+      {
+        "id": "1-c",
+        "text": "What device is primarily used for photography?",
+        "options": ["Toaster", "Camera", "Drill", "Compass"],
+        "correctIndex": 1
+      },
+      {
+        "id": "1-d",
+        "text": "Before becoming President, Volodymyr Zelensky was famous as:",
+        "options": ["A doctor", "A comedian", "A pilot", "A chef"],
+        "correctIndex": 1
+      }
+    ],
+    "2": [
+      {
+        "id": "2-a",
+        "text": "What do you feed a sourdough starter?",
+        "options": [
+          "Meat and wine",
+          "Flour and water",
+          "Milk and eggs",
+          "Oil and salt"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "2-b",
+        "text": "In Photoshop, what tool is used to cut out part of an image?",
+        "options": ["Crop", "Hammer", "Brush", "Gradient"],
+        "correctIndex": 0
+      },
+      {
+        "id": "2-c",
+        "text": "What is the most popular cryptocurrency?",
+        "options": ["Bitcorn", "Bitcoin", "Bitcoin", "Botcoin"],
+        "correctIndex": 1
+      },
+      {
+        "id": "2-d",
+        "text": "When are grapes usually harvested in Ukraine?",
+        "options": ["Winter", "Spring", "Autumn", "All year round"],
+        "correctIndex": 2
+      }
+    ],
+    "3": [
+      {
+        "id": "3-a",
+        "text": "Which software is primarily used for 3D modeling and visualization?",
+        "options": ["Word", "Excel", "3ds Max", "Paint"],
+        "correctIndex": 2
+      },
+      {
+        "id": "3-b",
+        "text": "What nickname is often associated with Petro Poroshenko's business?",
+        "options": [
+          "The Steel King",
+          "The Chocolate King",
+          "The Gas Baron",
+          "The Coal Miner"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "3-c",
+        "text": "What is a 'selfie'?",
+        "options": [
+          "A landscape photo",
+          "A photo of yourself",
+          "A photo of food",
+          "A blurry photo"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "3-d",
+        "text": "Which grape disease looks like white powder on leaves?",
+        "options": ["Oidium", "Covid", "Flu", "Measles"],
+        "correctIndex": 0
+      }
+    ],
+    "4": [
+      {
+        "id": "4-a",
+        "text": "What is the 'heart' of 1C enterprise software?",
+        "options": [
+          "Database",
+          "Graphics engine",
+          "Music player",
+          "Web browser"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "id": "4-b",
+        "text": "Donald Trump made a famous cameo in which movie?",
+        "options": ["Titanic", "Home Alone 2", "Avatar", "Harry Potter"],
+        "correctIndex": 1
+      },
+      {
+        "id": "4-c",
+        "text": "In bread baking, what does 'proofing' mean?",
+        "options": [
+          "Baking it",
+          "Letting dough rise",
+          "Eating it",
+          "Slicing it"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "4-d",
+        "text": "What is the 'Golden Hour' in photography?",
+        "options": [
+          "Lunch break",
+          "Time after sunrise/before sunset",
+          "Midnight",
+          "Noon"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "5": [
+      {
+        "id": "5-a",
+        "text": "The city of Bucha is known for having a beautiful large...",
+        "options": ["Desert", "City Park", "Volcano", "Seaport"],
+        "correctIndex": 1
+      },
+      {
+        "id": "5-b",
+        "text": "Which SQL command is used to retrieve data?",
+        "options": ["GET", "SELECT", "TAKE", "GRAB"],
+        "correctIndex": 1
+      },
+      {
+        "id": "5-c",
+        "text": "What makes sourdough bread taste sour?",
+        "options": [
+          "Lemon juice",
+          "Vinegar",
+          "Lactic acid bacteria",
+          "Rotten flour"
+        ],
+        "correctIndex": 2
+      },
+      {
+        "id": "5-d",
+        "text": "Which of these is a popular seedless grape variety in Ukraine?",
+        "options": ["Cabernet", "Jupiter", "Merlot", "Chardonnay"],
+        "correctIndex": 1
+      }
+    ],
+    "6": [
+      {
+        "id": "6-a",
+        "text": "What does 'ISO' control in a camera?",
+        "options": [
+          "Zoom level",
+          "Sensor sensitivity",
+          "Flash brightness",
+          "Battery life"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "6-b",
+        "text": "What is 'Autolysis' in baking?",
+        "options": [
+          "Mixing flour and water",
+          "Baking at high heat",
+          "Eating bread alone",
+          "Cleaning the oven"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "id": "6-c",
+        "text": "Volodymyr Zelensky voiced which character in the Ukrainian dub?",
+        "options": ["Shrek", "Paddington Bear", "Mickey Mouse", "Batman"],
+        "correctIndex": 1
+      },
+      {
+        "id": "6-d",
+        "text": "What instrument measures the sugar content (Brix) in grapes?",
+        "options": ["Thermometer", "Refractometer", "Barometer", "Speedometer"],
+        "correctIndex": 1
+      }
+    ],
+    "7": [
+      {
+        "id": "7-a",
+        "text": "Which renders are most common for architectural viz in 3ds Max?",
+        "options": [
+          "Paint & Brush",
+          "Corona & V-Ray",
+          "Unity & Unreal",
+          "Java & Python"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "7-b",
+        "text": "Which grape variety is known for a 'muscat' flavor?",
+        "options": ["Isabella", "Kishmish Veles", "Arcadia", "Moldova"],
+        "correctIndex": 1
+      },
+      {
+        "id": "7-c",
+        "text": "In Photoshop, what does the 'Clone Stamp' do?",
+        "options": [
+          "Erases background",
+          "Copies pixels from one area to another",
+          "Increases brightness",
+          "Adds text"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "7-d",
+        "text": "What is the 'Lame' used for in baking?",
+        "options": [
+          "Scoring the dough",
+          "Mixing the dough",
+          "Measuring temperature",
+          "Cleaning the table"
+        ],
+        "correctIndex": 0
+      }
+    ],
+    "8": [
+      {
+        "id": "8-a",
+        "text": "Petro Poroshenko served as the ___ President of Ukraine?",
+        "options": ["Third", "Fourth", "Fifth", "Sixth"],
+        "correctIndex": 2
+      },
+      {
+        "id": "8-b",
+        "text": "What is 'Bokeh' in photography?",
+        "options": [
+          "A camera brand",
+          "The aesthetic quality of the blur",
+          "A type of lens",
+          "A flash mode"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "8-c",
+        "text": "To prevent grapevines from freezing in Ukraine, growers often...",
+        "options": [
+          "Burn them",
+          "Cover/bury them for winter",
+          "Water them with hot water",
+          "Paint them white"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "8-d",
+        "text": "Who is the mysterious creator of Bitcoin?",
+        "options": [
+          "Elon Musk",
+          "Satoshi Nakamoto",
+          "Vitalik Buterin",
+          "Bill Gates"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "9": [
+      {
+        "id": "9-a",
+        "text": "In SQL, what is a 'Primary Key'?",
+        "options": [
+          "A password",
+          "A unique identifier for a row",
+          "The main command",
+          "The first column"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "9-b",
+        "text": "Which grape disease is called 'False Mildew'?",
+        "options": ["Oidium", "Mildew (Downy)", "Botrytis", "Anthracnose"],
+        "correctIndex": 1
+      },
+      {
+        "id": "9-c",
+        "text": "What is 'Hydration' in a bread recipe?",
+        "options": [
+          "Drinking water while baking",
+          "Ratio of water to flour",
+          "Washing the crust",
+          "Steaming the oven"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "9-d",
+        "text": "What format should a photographer use for maximum editing control?",
+        "options": ["JPEG", "GIF", "RAW", "PNG"],
+        "correctIndex": 2
+      }
+    ],
+    "10": [
+      {
+        "id": "10-a",
+        "text": "Bucha City Park is famous for its extreme sports area. What is it?",
+        "options": [
+          "Formula 1 track",
+          "Skate Park",
+          "Ski jump",
+          "Surfing pool"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "10-b",
+        "text": "Donald Trump was the owner of which beauty pageant?",
+        "options": [
+          "Miss Universe",
+          "Miss World",
+          "Miss America",
+          "Miss Earth"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "id": "10-c",
+        "text": "Which growth hormone is used to elongate Kishmish berries?",
+        "options": ["Adrenaline", "Gibberellin", "Insulin", "Testosterone"],
+        "correctIndex": 1
+      },
+      {
+        "id": "10-d",
+        "text": "What creates the open 'holes' (crumb) in sourdough bread?",
+        "options": [
+          "Poking it with a stick",
+          "Carbon dioxide from fermentation",
+          "Adding cheese",
+          "Using low quality flour"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "11": [
+      {
+        "id": "11-a",
+        "text": "In 1C programming, the code is historically written in which language?",
+        "options": ["English", "Russian/Cyrillic", "Chinese", "Latin"],
+        "correctIndex": 1
+      },
+      {
+        "id": "11-b",
+        "text": "What is 'Chromatic Aberration' in photography?",
+        "options": [
+          "Black and white filter",
+          "Color fringing on edges",
+          "Perfect focus",
+          "Lens flare"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "11-c",
+        "text": "What is the 'Oven Spring'?",
+        "options": [
+          "A season for baking",
+          "Rapid rise of dough in the oven",
+          "A metal coil in the oven",
+          "Taking bread out"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "11-d",
+        "text": "The 'Veles' grape variety is famous for...",
+        "options": [
+          "Being very sour",
+          "Having huge pink seedless clusters",
+          "Being black and seeded",
+          "Only growing in winter"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "12": [
+      {
+        "id": "12-a",
+        "text": "Which chemical reaction gives bread crust its brown color?",
+        "options": [
+          "Photosynthesis",
+          "Maillard reaction",
+          "Oxidation",
+          "Fusion"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "12-b",
+        "text": "In studio photography, what is a 'Softbox' used for?",
+        "options": [
+          "Storing cameras",
+          "Diffusing light",
+          "Sitting on",
+          "Blocking light"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "12-c",
+        "text": "The root system 'Phylloxera' destroyed vineyards in Europe. How was it solved?",
+        "options": [
+          "Pesticides",
+          "Grafting onto American rootstocks",
+          "Burning all fields",
+          "Genetic modification"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "12-d",
+        "text": "Which political party was founded by Petro Poroshenko?",
+        "options": [
+          "Servant of the People",
+          "European Solidarity",
+          "Batkivshchyna",
+          "Voice"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "13": [
+      {
+        "id": "13-a",
+        "text": "In SQL, which JOIN returns all records when there is a match in either table?",
+        "options": ["INNER JOIN", "LEFT JOIN", "FULL OUTER JOIN", "RIGHT JOIN"],
+        "correctIndex": 2
+      },
+      {
+        "id": "13-b",
+        "text": "What is the 'Rule of Thirds' grid layout?",
+        "options": ["2x2", "3x3", "4x4", "5x5"],
+        "correctIndex": 1
+      },
+      {
+        "id": "13-c",
+        "text": "Which popular US seedless grape variety (blue) thrives in Ukraine?",
+        "options": ["Jupiter", "Mars", "Saturn", "Pluto"],
+        "correctIndex": 0
+      },
+      {
+        "id": "13-d",
+        "text": "What is a 'Banneton'?",
+        "options": [
+          "A type of French bread",
+          "A proofing basket",
+          "A slicing knife",
+          "A type of flour"
+        ],
+        "correctIndex": 1
+      }
+    ],
+    "14": [
+      {
+        "id": "14-a",
+        "text": "In 3ds Max, what is 'UVW Mapping' used for?",
+        "options": [
+          "Lighting calculation",
+          "Applying 2D textures to 3D objects",
+          "Animating movement",
+          "Rendering video"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "14-b",
+        "text": "Which bacteria is primarily responsible for the acidity in sourdough?",
+        "options": ["Salmonella", "Lactobacillus", "E. Coli", "Penicillin"],
+        "correctIndex": 1
+      },
+      {
+        "id": "14-c",
+        "text": "In Photoshop, what blend mode hides black pixels?",
+        "options": ["Multiply", "Screen", "Overlay", "Difference"],
+        "correctIndex": 1
+      },
+      {
+        "id": "14-d",
+        "text": "Trump's famous 'Covfefe' tweet was likely a typo for...",
+        "options": ["Coffee", "Coverage", "Conference", "Coventry"],
+        "correctIndex": 1
+      }
+    ],
+    "15": [
+      {
+        "id": "15-a",
+        "text": "The 'Desem' starter originates from which country's method?",
+        "options": ["France", "Belgium (Flemish)", "Italy", "Germany"],
+        "correctIndex": 1
+      },
+      {
+        "id": "15-b",
+        "text": "What is 'Diffraction' in photography usually caused by?",
+        "options": [
+          "ISO too high",
+          "Aperture too small (e.g. f/22)",
+          "Shutter too fast",
+          "Dirty lens"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "15-c",
+        "text": "In viticulture, what is the 'Kober 5BB'?",
+        "options": [
+          "A fertilizer",
+          "A rootstock",
+          "A pruning tool",
+          "A grape variety"
+        ],
+        "correctIndex": 1
+      },
+      {
+        "id": "15-d",
+        "text": "Which consensus mechanism does Ethereum currently use?",
+        "options": [
+          "Proof of Work",
+          "Proof of Stake",
+          "Proof of History",
+          "Proof of Authority"
+        ],
+        "correctIndex": 1
+      }
+    ]
+  }
+}
